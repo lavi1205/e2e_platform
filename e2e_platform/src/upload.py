@@ -53,16 +53,16 @@ def upload_to_s3_batch(s3_client, source_folder, bucket_name, s3_folder, batch_s
 source_folder = staging_folder
 # Example usage
 if __name__ == "__main__":
-    aws_access_key = "AKIA5QHCB3ISYD7NKTNF"
-    aws_secret_key = "aMqPLMHK+whmQSgFqi9sOSHvKOZl9nTQaitSYDUj"
-    region_name = "ap-northeast-1"
+    aws_access_key = ""
+    aws_secret_key = ""
+    region_name = ""
     
     # Set up S3 client
     s3_client = create_s3_client(aws_access_key, aws_secret_key, region_name)
     
     # Upload files in batches
     source_folder = staging_folder
-    bucket_name = "fa-adaptive-vn-dev-soafee"
-    s3_folder = "firmware/test/"
+    bucket_name = ""
+    s3_folder = ""
     
     upload_to_s3_batch(s3_client, source_folder, bucket_name, s3_folder, batch_size=10)
