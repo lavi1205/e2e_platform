@@ -8,9 +8,9 @@ DOWNLOAD_FOLDER = 'download_data'
 
 STAGING_FOLDER = 'staging_data'
 
-MONTHS_TO_DOWNLOAD = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
+MONTHS_TO_DOWNLOAD = [1, 2, 3]
 
-YEARS_TO_DOWNLOAD = [2023,2022]
+YEARS_TO_DOWNLOAD = [2023]
 
 COLUMNS_TO_KEEP = [
 'VendorID', 'tpep_pickup_datetime', 'tpep_dropoff_datetime', 

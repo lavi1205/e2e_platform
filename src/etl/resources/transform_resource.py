@@ -67,15 +67,32 @@ class ParquetTransformResource(ConfigurableResource):
         
         return f"Successfully processed {file_name}"
 
-    def transform_parquet_files(self, context:AssetExecutionContext):
-        """Transforms multiple Parquet files in parallel."""
+    # def transform_parquet_files(self, context:AssetExecutionContext):
+    #     """Transforms multiple Parquet files in parallel."""
+    #     parquet_files = [os.path.join(self.source_folder, f) for f in os.listdir(self.source_folder) if f.endswith(".parquet")]
+    #     context.log.info(f"Found {len(parquet_files)} Parquet files to process.")
+        
+    #     with ProcessPoolExecutor(max_workers=self.max_workers) as executor:
+    #         futures = {executor.submit(self.process_parquet_file, file, context): file for file in parquet_files}
+    #         for future in as_completed(futures):
+    #             result = future.result()
+    #             context.log.info(result)
+        
+    #     context.log.info(f"Transformation complete. Summaries saved in {self.output_folder}")
+
+    def transform_parquet_files(self, context: AssetExecutionContext):
+        """Transforms multiple Parquet files sequentially."""
+        # Get all Parquet files in the source folder
         parquet_files = [os.path.join(self.source_folder, f) for f in os.listdir(self.source_folder) if f.endswith(".parquet")]
         context.log.info(f"Found {len(parquet_files)} Parquet files to process.")
         
-        with ProcessPoolExecutor(max_workers=self.max_workers) as executor:
-            futures = {executor.submit(self.process_parquet_file, file, context): file for file in parquet_files}
-            for future in as_completed(futures):
-                result = future.result()
+        # Process each file sequentially
+        for file_path in parquet_files:
+            try:
+                result = self.process_parquet_file(file_path, context)
                 context.log.info(result)
+            except Exception as e:
+                context.log.error(f"Error processing file {file_path}: {e}")
         
         context.log.info(f"Transformation complete. Summaries saved in {self.output_folder}")
+

@@ -31,16 +31,12 @@ class ParquetDownloadResource(ConfigurableResource):
             context: Dagster context for logging.
         """
         #  https://d37ci6vzurychx.cloudfront.net/trip-data/yellow_tripdata_2024-01.parquet_2023-03.parquet
-        # base_filename = os.path.basename(self.base_url).split('_')[0] + '_' + self.base_url.split('_')[1]
         base_filename = os.path.basename(self.base_url).split('/')[-1].split('_')[0] + '_' + self.base_url.split('/')[-1].split('_')[1]
         for year in self.years:
             for month in self.months:
                 modified_url = f"{self.base_url.split('_')[0] + '_' + self.base_url.split('_')[1]}_{year}-{month:02d}.parquet"
                 filename = f"{base_filename}_{year}-{month:02d}.parquet"
                 file_path = os.path.join(self.download_folder, filename)
-
-                context.log.info(f"Preparing to download file: {file_path}")
-                context.log.info(f"Modified_url: {modified_url}")
                 # try:
                 with httpx.Client() as client:
                     response = client.get(modified_url)
