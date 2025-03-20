@@ -1,19 +1,21 @@
-FROM python:3.12-slim
+FROM python:3.12
 
-RUN mkdir -p /opt/dagster/dagster_home /opt/dagster/app
+WORKDIR /app
 
-RUN pip install dagster-webserver dagster-postgres dagster-aws
+ENV DAGSTER_HOME=/app
 
-# Copy your code and workspace to /opt/dagster/app
-COPY repo.py workspace.yaml /opt/dagster/app/
+ENV PYTHONPATH=/app
 
-ENV DAGSTER_HOME=/opt/dagster/dagster_home/
+RUN apt-get update && apt-get install -y \
+    gcc sudo vim nano telnet\
+    && rm -rf /var/lib/apt/lists/*
 
-# Copy dagster instance YAML to $DAGSTER_HOME
-COPY dagster.yaml /opt/dagster/dagster_home/
+COPY /etl/ /app/src/etl
 
-WORKDIR /opt/dagster/app
+COPY requirements.txt .
+
+RUN pip install --default-timeout=1000 -r requirements.txt 
 
 EXPOSE 3000
 
-ENTRYPOINT ["dagster-webserver", "-h", "0.0.0.0", "-p", "3000"]
+CMD ["dagster-webserver", "-f", "src/etl/definition.py", "-h", "0.0.0.0", "-p", "3000"]

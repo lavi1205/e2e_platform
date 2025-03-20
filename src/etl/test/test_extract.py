@@ -1,8 +1,7 @@
 import os, sys
 import pytest
 from unittest import mock
-sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
-from etl.extract import ensure_download_folder_exists, download_parquet_data
+from etl.resources.ts_resources.ParquetTransformResource import ensure_download_folder_exists, download_parquet_data
 
 # Define the path where you expect the folder to be created
 @pytest.fixture

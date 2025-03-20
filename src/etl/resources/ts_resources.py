@@ -48,5 +48,3 @@ class ParquetDownloadResource(ConfigurableResource):
                         context.log.error(
                             f"Failed to download {filename}. Status code: {response.status_code}"
                         )
-                # except Exception as e:
-                #     context.log.error(f"Error during download: {e}")

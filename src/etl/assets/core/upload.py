@@ -21,14 +21,12 @@ def upload_to_s3(context: AssetExecutionContext, upload_resource: ParquetUploadR
     # Create the S3 client
     s3_client = upload_resource.create_s3_client()
 
-    # Find all Parquet files in the source folder
     parquet_files = [file_name for file_name in os.listdir(source_folder) if file_name.endswith(".parquet")]
 
     if not parquet_files:
         context.log.error("No Parquet files found in the source folder.")
         return "No files to upload."
 
-    # Batch processing
     for i in range(0, len(parquet_files), batch_size):
         batch = parquet_files[i : i + batch_size]
         context.log.info(f"Processing batch {i // batch_size + 1}: {batch}")

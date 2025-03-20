@@ -17,32 +17,17 @@ class ParquetTransformResource(ConfigurableResource):
         if not os.path.exists(self.output_folder):
             os.makedirs(self.output_folder)
             context.log.info(f"Created output folder: {self.output_folder}")
-
+        return f"Folder already exist in the folder"
+        
     def process_parquet_file(self, file_path, context:AssetExecutionContext):
         """Processes a single Parquet file."""
         file_name = os.path.basename(file_path)
-        context.log.info(f"Processing file: {file_name}")
-        
-        # Load the Parquet file into a pandas DataFrame
         parquet_data = pq.read_table(file_path)
         df = parquet_data.to_pandas()
-        context.log.info(f"Loaded Parquet file: {file_name}")
-        
-        # Extract the month from the file name (assuming format like 'yellow_tripdata_2024-07.parquet')
         month_in_file = re.search(r'-(\d{2})\.parquet$', file_name).group(1)
-        context.log.info(f"Extracted month {month_in_file} from file name: {file_name}")
-        
-        # Convert pickup datetime to datetime format
         df['tpep_pickup_datetime'] = pd.to_datetime(df['tpep_pickup_datetime'])
-        
-        # Filter rows where the month of tpep_pickup_datetime matches the month in the file name
         df = df[df['tpep_pickup_datetime'].dt.month == int(month_in_file)]
-        context.log.info(f"Filtered records where pickup month matches {month_in_file}")
-        
-        # Extract the date for grouping
         df['pickup_date'] = df['tpep_pickup_datetime'].dt.date
-        
-        # Group by the pickup date and calculate summary statistics
         summary = df.groupby('pickup_date').agg(
             total_passenger_count=('passenger_count', 'count'),
             total_distance=('trip_distance', 'sum'),
@@ -50,16 +35,9 @@ class ParquetTransformResource(ConfigurableResource):
             avg_trip_distance=('trip_distance', 'mean'),
             avg_fare_amount=('fare_amount', 'mean')
         ).reset_index()
-        context.log.info(f"Generated summary statistics for file: {file_name}")
-        
-        # Add a UUID for each date using uuid4
+        context.log.info(f"Generated summary statistics for file: {file_name} success")
         summary['uuid'] = [str(uuid.uuid4()) for _ in range(len(summary))]
-        context.log.info(f"Added UUIDs for each pickup_date")
-        
-        # Reorder the columns to place UUID first
         summary = summary[['uuid', 'pickup_date', 'total_passenger_count', 'total_distance', 'total_fare', 'avg_trip_distance', 'avg_fare_amount']]
-        
-        # Save the summary as a Parquet file in the output folder
         output_file_name = f"summary_{file_name}"
         output_file_path = os.path.join(self.output_folder, output_file_name)
         summary.to_parquet(output_file_path, index=False)

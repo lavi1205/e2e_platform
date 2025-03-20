@@ -4,7 +4,8 @@ from src.etl.assets import core
 from src.etl.resources.ts_resources import ParquetDownloadResource
 from src.etl.resources.transform_resource import ParquetTransformResource
 from src.etl.resources.upload_resource import ParquetUploadResource
-import os
+from src.etl.resources.load_resource import ParquetPostgresLoader
+import os, sys, psycopg2
 
 core_assets = load_assets_from_package_module(core, group_name=CORE)
 
@@ -22,13 +23,21 @@ RESOURCES_LOCAL = {
     max_workers=MAX_WORKERS
     ),
     "upload_resource": ParquetUploadResource(
-        aws_access_key=os.environ["AWS_ACCESS_KEY"],
-        aws_secret_key=os.environ["AWS_SECRET_KEY"],
-        region_name=os.environ["REGION"],
+        aws_access_key=os.environ.get("AWS_ACCESS_KEY", "test"),
+        aws_secret_key=os.environ.get("AWS_SECRET_KEY", "test1"),
+        region_name=os.environ.get("REGION", "test_region"),
         source_folder=STAGING_FOLDER,
-        bucket_name=os.environ["S3_BUCKET"],
+        bucket_name=os.environ.get("S3_BUCKET", "test_bucket"),
         s3_folder="firmware/test/",
         batch_size=10
+    ),
+    "load_resource": ParquetPostgresLoader(
+        host="172.18.0.2",
+        port="5432",
+        dbname="trip_summary",
+        user="postgres",
+        password="postgres",
+        output_folder=STAGING_FOLDER
     )
 }
 resources_by_deployment_name = {

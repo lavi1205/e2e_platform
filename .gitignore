@@ -2,3 +2,10 @@
 **__pycache__
 **download_data
 **staging_data
+**logs**
+**nux**
+**pytest**
+**telemetry**
+**history**
+**schedules**
+**storage**
