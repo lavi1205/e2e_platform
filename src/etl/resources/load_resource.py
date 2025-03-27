@@ -26,7 +26,7 @@ class ParquetPostgresLoader(ConfigurableResource):
             )
             context.log.info("Connection success: ", self.user)
             return self.conn
-        except Error as e:
+        except Exception as e:
             context.log.error("Connection error")
 
     def load_parquet_files(self, context: AssetExecutionContext):

@@ -35,8 +35,6 @@ if [ "$(docker ps -q -f name=${CONTAINER_NAME})" ]; then
     docker rm ${CONTAINER_NAME}
     check_status "Removing existing container"
 fi
-
-# Run the Docker container
 echo "Running Docker container: ${CONTAINER_NAME}..."
 docker run -d \
     --name ${CONTAINER_NAME} \
