@@ -21,7 +21,7 @@ async def get_db():
     finally:
         await conn.close()
 
-@router.get("/trips", response_model=ResponseModel, tags=["Trips"])
+@router.get("/trips", response_model=ResponseModel, tags=["trips"])
 async def get_trip_summary(
     pickup_date: date = Query(..., description="Date of the trip in YYYY-MM-DD format"),
     db=Depends(get_db)
